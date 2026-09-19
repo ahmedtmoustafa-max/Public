@@ -45,3 +45,15 @@ def test_emergency_variants_are_refused(number):
 def test_ordinary_numbers_ending_in_emergency_digits_are_allowed(number):
     """Regression: suffix matching used to block any number ending in 911."""
     assert check_destination(number, Settings()) == number
+
+
+def test_your_own_number_is_refused():
+    settings = Settings(my_phone_number="+15195550000")
+    with pytest.raises(DestinationRefused, match="your own number"):
+        check_destination("+1 (519) 555-0000", settings)
+
+
+def test_the_services_own_twilio_number_is_refused():
+    settings = Settings(twilio_from_number="+15550001111")
+    with pytest.raises(DestinationRefused, match="own Twilio number"):
+        check_destination("+15550001111", settings)

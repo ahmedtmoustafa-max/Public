@@ -74,3 +74,30 @@ menus, and it saves what worked as a playbook so the next call is `script`.
 Where should this run? A laptop that sleeps mid-call drops the call, and hold
 queues are exactly when laptops sleep. `fly.toml` is in the repo for that
 reason, but it hasn't been deployed.
+
+---
+
+## Update — phone number configured
+
+`MY_PHONE_NUMBER` is set in `phone_agent/.env` on whatever machine runs the
+server. **It is not in the repo, and must not go in:** `ahmedtmoustafa-max/Public`
+is genuinely public on GitHub (`"private": false`), so a personal mobile there
+would be visible to everyone and to every scraper, and history rewriting does
+not reliably remove it.
+
+Three things guard that now:
+
+- `.env` and `config/profile.yaml` are gitignored.
+- `tests/test_no_leaked_numbers.py` scans every tracked file and fails on any
+  phone number outside the reserved 555 range. It caught a near-miss the same
+  day it was written: a test of mine used a number one digit-group away from
+  the real one, and again when this very note first spelled that number out.
+- `scripts/setup.sh` writes `.env` with `chmod 600` and bakes nothing in.
+
+Also added: `phone-agent doctor` (static config checks, plus `--live` to verify
+the Twilio account, the outbound number's voice capability, and trial-account
+verified-caller limits), and a guard refusing to dial your own number or the
+service's own Twilio number.
+
+Still outstanding before a first real call: Twilio account, a public HTTPS
+host, and a decision on where this runs.

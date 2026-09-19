@@ -105,19 +105,36 @@ capability, and note your Account SID and Auth Token. Expect roughly
 **US$1–2/month** for the number and **~US$0.013/minute** for outbound US/Canada
 calls — an hour on hold is under a dollar.
 
-### 2. Install
+### 2. Install and configure
 
 ```bash
 git clone <this repo> && cd phone_agent
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-cp .env.example .env         # then fill it in
-cp config/profile.example.yaml config/profile.yaml
+./scripts/setup.sh
 ```
 
-The two settings that matter most:
+`setup.sh` asks for what it needs and writes `.env`, then checks the result.
+You can also copy `.env.example` by hand. The two settings that matter most:
 
 - `MY_PHONE_NUMBER` — the phone that rings when a human answers.
 - `PUBLIC_BASE_URL` — where Twilio can reach this server, over HTTPS.
+
+Check it any time:
+
+```bash
+PYTHONPATH=src .venv/bin/python -m phone_agent.cli doctor         # config only
+PYTHONPATH=src .venv/bin/python -m phone_agent.cli doctor --live  # also asks Twilio
+```
+
+`--live` verifies the credentials work, that the outbound number is on your
+account and voice-capable, and — if you're still on a Twilio trial — whether
+the number you want to reach has been verified, since trial accounts can't
+call anything else.
+
+> **Your phone number goes in `.env`, never in the repo.** `.env` and
+> `config/profile.yaml` are gitignored, and `tests/test_no_leaked_numbers.py`
+> fails the build if a real-looking number turns up in a tracked file. Every
+> number written down in this repository uses the reserved 555 range.
 
 ### 3. Make it reachable
 
@@ -195,6 +212,8 @@ input during its opening announcement: `ww,1,0`.
 | `GET /playbooks` | saved key sequences |
 | `GET /healthz` | what's configured |
 
+`phone-agent doctor` covers the same ground before you place a call.
+
 ---
 
 ## What it will not do
@@ -210,6 +229,8 @@ The agent navigates menus. It does not represent you.
   terms. Those are yours to make.
 - **It won't dial emergency services.** 911/112/999/988 are refused outright,
   allowlist or not. If you need help, call directly.
+- **It won't dial your own number**, or the Twilio number it calls out from —
+  both just make loops.
 - **It won't take a callback offer**, since you're not on the line to receive it.
 
 Set `ALLOWED_DESTINATIONS` to an explicit list if this runs anywhere other than
@@ -245,7 +266,7 @@ public URLs that can place and steer calls.
 ## Tests
 
 ```bash
-.venv/bin/python -m pytest        # 85 tests, no network, no Twilio account
+.venv/bin/python -m pytest        # 113 tests, no network, no Twilio account
 ```
 
 The detector is tested against synthesised hold music, recorded-announcement
@@ -266,5 +287,6 @@ src/phone_agent/
   telephony.py     Twilio REST + destination guardrails
   notify.py        ntfy / Pushover / SMS
   playbooks.py     saved and learned key sequences
+  doctor.py        configuration checks
   cli.py           the command line
 ```

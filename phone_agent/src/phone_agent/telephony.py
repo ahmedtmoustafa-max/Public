@@ -45,6 +45,20 @@ def check_destination(number: str, settings: Settings) -> str:
                 f"{number} is on the blocked list (emergency services are never dialled)."
             )
 
+    # Dialling your own phone means the agent waits on hold for you while your
+    # phone rings; dialling the Twilio number points the service at itself.
+    if settings.my_phone_number and number == normalise_number(settings.my_phone_number):
+        raise DestinationRefused(
+            f"{number} is your own number (MY_PHONE_NUMBER). The agent calls "
+            "somewhere else and then rings you."
+        )
+    if settings.twilio_from_number and number == normalise_number(
+        settings.twilio_from_number
+    ):
+        raise DestinationRefused(
+            f"{number} is this service's own Twilio number."
+        )
+
     if settings.allowed_destinations:
         allowed = {normalise_number(n) for n in settings.allowed_destinations}
         if number not in allowed:
