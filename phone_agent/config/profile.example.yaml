@@ -1,0 +1,21 @@
+# Copy to config/profile.yaml.
+#
+# Everything under `may_disclose` is the complete set of facts the agent is
+# allowed to give a phone menu. Anything not listed here, it will not say --
+# it is instructed to wait for you instead of guessing or inventing.
+#
+# Think carefully before adding anything here. A phone tree that wants your
+# date of birth is usually about to hand you to a person anyway, and that is
+# a fine moment for you to take over.
+
+may_disclose:
+  first_name: "Ahmed"
+  reason_for_call: "a general enquiry"
+  # postal_code: "N6A 5A5"
+  # date_of_birth: "1 January 1980"
+
+# Never put these in this file, no matter what a menu asks for:
+#   - passwords, PINs, security answers
+#   - full credit card or bank details
+#   - health card, SIN / SSN, passport numbers
+# If a tree demands one, let it wait: you will be on the line shortly.

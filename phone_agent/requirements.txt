@@ -1,0 +1,11 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+twilio==9.4.1
+anthropic==0.42.0
+websockets==14.1
+numpy==2.2.1
+pydantic==2.10.4
+pydantic-settings==2.7.0
+PyYAML==6.0.2
+httpx==0.28.1
+python-multipart==0.0.20

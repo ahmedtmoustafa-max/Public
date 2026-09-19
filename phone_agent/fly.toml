@@ -1,0 +1,23 @@
+# fly launch --no-deploy, then `fly secrets set ...` for everything in .env,
+# then `fly deploy`. PUBLIC_BASE_URL should be https://<app-name>.fly.dev
+app = "phone-agent"
+primary_region = "yyz"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  # Media streams are long-lived WebSockets; never scale this to zero.
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512

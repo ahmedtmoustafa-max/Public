@@ -1,0 +1,15 @@
+# Playbooks are saved key sequences for numbers you call often. Write them by
+# hand, or let `auto` mode discover one and save it for you.
+#
+# keys syntax:  comma separates menu levels (we wait for each prompt),
+#               'w' inside a step is a half-second pause,
+#               '*' and '#' work as you'd expect.
+id: example-airline
+label: Example Airline
+number: "+18005551212"
+keys: "1,w3,0"
+goal: "Reach a live agent about an existing booking."
+notes: |
+  1 = English, 3 = existing reservations, 0 = skip the booking-reference
+  prompt and go to an agent.
+learned: false
